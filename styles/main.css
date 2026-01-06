@@ -1,0 +1,223 @@
+/* ===============================
+   Global Reset & Base Styles
+   =============================== */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-main: #0f172a;        /* Deep slate */
+  --bg-panel: #111827;       /* Panel background */
+  --bg-muted: #1f2933;       /* Muted blocks */
+  --border-color: #1e293b;
+
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+
+  --accent: #38bdf8;         /* Calm blue */
+  --accent-soft: rgba(56, 189, 248, 0.15);
+
+  --radius: 12px;
+}
+
+body {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===============================
+   Header
+   =============================== */
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-panel);
+}
+
+.app-header h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+.session-status {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.session-status strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ===============================
+   Dashboard Layout
+   =============================== */
+
+.dashboard {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+/* ===============================
+   Panels
+   =============================== */
+
+.panel {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+}
+
+/* ===============================
+   State Panel
+   =============================== */
+
+.state-panel {
+  grid-column: 1 / 2;
+}
+
+.state-display {
+  margin-top: auto;
+  padding: 1.5rem;
+  background-color: var(--bg-muted);
+  border-radius: var(--radius);
+  border: 1px dashed var(--border-color);
+  text-align: center;
+}
+
+.state-label {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.state-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ===============================
+   Metrics Panel
+   =============================== */
+
+.metrics-panel {
+  grid-column: 2 / 3;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.metric {
+  background-color: var(--bg-muted);
+  border-radius: var(--radius);
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+}
+
+.metric-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.4px;
+}
+
+.metric-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ===============================
+   Timeline Panel
+   =============================== */
+
+.timeline-panel {
+  grid-column: 1 / 2;
+}
+
+.timeline-placeholder {
+  flex: 1;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  background-color: var(--bg-muted);
+}
+
+/* ===============================
+   Summary Panel
+   =============================== */
+
+.summary-panel {
+  grid-column: 2 / 3;
+}
+
+.summary-placeholder {
+  flex: 1;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  background-color: var(--bg-muted);
+}
+
+/* ===============================
+   Footer
+   =============================== */
+
+.app-footer {
+  padding: 0.75rem 2rem;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-panel);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+}
