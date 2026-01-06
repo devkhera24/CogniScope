@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CogniScope · Browser Intelligence Lab</title>
+
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="styles/main.css" />
+
+  <!-- Fonts (Professional, Neutral) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header class="app-header">
+    <div class="header-left">
+      <h1>CogniScope</h1>
+      <p class="subtitle">
+        Real-Time Browser Interaction Intelligence
+      </p>
+    </div>
+
+    <div class="header-right">
+      <span class="session-status">
+        Session: <strong>Active</strong>
+      </span>
+    </div>
+  </header>
+
+  <!-- ================= MAIN DASHBOARD ================= -->
+  <main class="dashboard">
+
+    <!-- Cognitive State -->
+    <section class="panel state-panel">
+      <h2>Current Cognitive State</h2>
+      <div class="state-display">
+        <span class="state-label">—</span>
+        <p class="state-hint">
+          Derived from live interaction signals
+        </p>
+      </div>
+    </section>
+
+    <!-- Live Metrics -->
+    <section class="panel metrics-panel">
+      <h2>Live Behavioral Metrics</h2>
+
+      <div class="metrics-grid">
+        <div class="metric">
+          <span class="metric-label">Focus Ratio</span>
+          <span class="metric-value">—</span>
+        </div>
+
+        <div class="metric">
+          <span class="metric-label">Interaction Density</span>
+          <span class="metric-value">—</span>
+        </div>
+
+        <div class="metric">
+          <span class="metric-label">Idle Time</span>
+          <span class="metric-value">—</span>
+        </div>
+
+        <div class="metric">
+          <span class="metric-label">Scroll Intensity</span>
+          <span class="metric-value">—</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="panel timeline-panel">
+      <h2>Interaction Timeline</h2>
+      <div class="timeline-placeholder">
+        <p>Timeline visualization will appear here</p>
+      </div>
+    </section>
+
+    <!-- Session Summary -->
+    <section class="panel summary-panel">
+      <h2>Session Summary</h2>
+      <div class="summary-placeholder">
+        <p>Session insights will be generated at the end</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="app-footer">
+    <p>
+      CogniScope · Built with pure JavaScript · No ML · No Backend
+    </p>
+  </footer>
+
+  <!-- ================= ENTRY POINT ================= -->
+  <script type="module" src="app.js"></script>
+
+</body>
+</html>
