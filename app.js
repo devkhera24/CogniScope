@@ -6,6 +6,13 @@ import { inferState } from "./core/stateEngine.js";
 import { updateStateBadge } from "./ui/stateBadge.js";
 import { updateMetrics } from "./ui/gauges.js";
 
+const stateDurations = {
+  FOCUSED: 0,
+  DISTRACTED: 0,
+  IDLE: 0
+};
+
+
 /* =========================
    Session Tracking
    ========================= */
@@ -41,6 +48,9 @@ startBufferProcessor((eventBatch) => {
   const now = Date.now();
 
   // Accumulate focused time
+
+  stateDurations[lastState] += now - lastStateChange;
+
   if (lastState === "FOCUSED") {
     focusedTime += now - lastStateChange;
   }
