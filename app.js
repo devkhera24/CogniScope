@@ -5,7 +5,7 @@ import { inferState } from "./core/stateEngine.js";
 
 import { updateStateBadge } from "./ui/stateBadge.js";
 import { updateMetrics } from "./ui/gauges.js";
-import { addChartPoint, clearChart } from "./ui/stateChart.js";
+import { addChartPoint, clearChart, getChartHistory } from "./ui/stateChart.js";
 import { saveSessionSummary, clearSession } from "./core/sessionStore.js";
 import { renderSessionSummary } from "./ui/summary.js";
 import { addTimelineEvent } from "./ui/timeline.js";
@@ -130,7 +130,8 @@ window.addEventListener("beforeunload", () => {
     focusRatio: (now - sessionStart) > 0
       ? stateDurations.FOCUSED / (now - sessionStart)
       : 0,
-    timeInState: stateDurations
+    timeInState: stateDurations,
+    history: getChartHistory()
   };
 
   saveSessionSummary(summary);

@@ -35,6 +35,13 @@ export function addChartPoint(state) {
 }
 
 /**
+ * Returns the current history for session saving
+ */
+export function getChartHistory() {
+  return history;
+}
+
+/**
  * Clears the chart history
  */
 export function clearChart() {

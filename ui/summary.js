@@ -1,6 +1,7 @@
 // ui/summary.js
 
 import { loadLastSession } from "../core/sessionStore.js";
+import { drawSummaryChart } from "./summaryChart.js";
 
 export function renderSessionSummary() {
   const summary = loadLastSession();
@@ -25,6 +26,11 @@ export function renderSessionSummary() {
   setVal("summary-focused", `${Math.round(summary.timeInState.FOCUSED / 1000)}s`);
   setVal("summary-distracted", `${Math.round(summary.timeInState.DISTRACTED / 1000)}s`);
   setVal("summary-idle", `${Math.round(summary.timeInState.IDLE / 1000)}s`);
+
+  // Render the static history graph
+  if (summary.history) {
+    drawSummaryChart(summary.history);
+  }
 }
 
 export function clearSummaryUI() {
@@ -36,4 +42,10 @@ export function clearSummaryUI() {
     const el = document.getElementById(id);
     if (el) el.textContent = "—";
   });
+
+  const canvas = document.getElementById("summary-state-chart");
+  if (canvas) {
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
 }
