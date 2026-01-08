@@ -14,7 +14,7 @@ export function renderSessionSummary() {
   container.innerHTML = `
     <div>
       <p><strong>Last Session</strong></p>
-      <p>Duration: ${minutes} min</p>
+      <p>Previous session duration: ${minutes} min</p>
       <p>Focus Ratio: ${summary.focusRatio.toFixed(2)}</p>
       <p>Focused: ${Math.round(summary.timeInState.FOCUSED / 1000)} s</p>
       <p>Distracted: ${Math.round(summary.timeInState.DISTRACTED / 1000)} s</p>

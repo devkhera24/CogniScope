@@ -8,6 +8,8 @@ import { updateMetrics } from "./ui/gauges.js";
 import { saveSessionSummary } from "./core/sessionStore.js";
 import { renderSessionSummary } from "./ui/summary.js";
 
+
+
 const stateDurations = {
   FOCUSED: 0,
   DISTRACTED: 0,
@@ -42,6 +44,22 @@ initEventCollector((event) => {
    Main Processing Pipeline
    ========================= */
 
+   function transitionState(newState) {
+  const now = Date.now();
+
+  // accumulate time for previous state
+  stateDurations[lastState] += now - lastStateChange;
+
+  // accumulate focused time if applicable
+  if (lastState === "FOCUSED") {
+    focusedTime += now - lastStateChange;
+  }
+
+  lastState = newState;
+  lastStateChange = now;
+}
+
+
 startBufferProcessor((eventBatch) => {
   const metrics = analyzeEventBatch(eventBatch);
   if (!metrics) return;
@@ -53,12 +71,10 @@ startBufferProcessor((eventBatch) => {
 
   stateDurations[lastState] += now - lastStateChange;
 
-  if (lastState === "FOCUSED") {
-    focusedTime += now - lastStateChange;
-  }
+if (state !== lastState) {
+  transitionState(state);
+}
 
-  lastState = state;
-  lastStateChange = now;
 
   const totalTime = now - sessionStart;
   const focusRatio = totalTime > 0 ? focusedTime / totalTime : 0;
@@ -91,12 +107,10 @@ setInterval(() => {
     const state = inferState(idleMetrics);
 
     // Accumulate focused time correctly
-    if (lastState === "FOCUSED") {
-      focusedTime += now - lastStateChange;
-    }
-
-    lastState = state;
-    lastStateChange = now;
+    
+    if (state !== lastState) {
+    transitionState(state);
+   }
 
     const totalTime = now - sessionStart;
     const focusRatio = totalTime > 0 ? focusedTime / totalTime : 0;
