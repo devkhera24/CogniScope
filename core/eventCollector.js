@@ -5,7 +5,9 @@ export function initEventCollector(emit) {
     throw new Error("EventCollector requires an emit function");
   }
 
-  // ---------- Page Visibility ----------
+  // -------------------------------
+  // Page Visibility
+  // -------------------------------
   document.addEventListener("visibilitychange", () => {
     emit({
       type: "VISIBILITY_CHANGE",
@@ -16,7 +18,9 @@ export function initEventCollector(emit) {
     });
   });
 
-  // ---------- Focus / Blur ----------
+  // -------------------------------
+  // Window Focus / Blur
+  // -------------------------------
   window.addEventListener("focus", () => {
     emit({
       type: "WINDOW_FOCUS",
@@ -33,7 +37,9 @@ export function initEventCollector(emit) {
     });
   });
 
-  // ---------- Keyboard ----------
+  // -------------------------------
+  // Keyboard Interaction
+  // -------------------------------
   window.addEventListener("keydown", (e) => {
     emit({
       type: "KEY_DOWN",
@@ -44,15 +50,9 @@ export function initEventCollector(emit) {
     });
   });
 
-  // ---------- Mouse ----------
-  window.addEventListener("mousemove", () => {
-    emit({
-      type: "MOUSE_MOVE",
-      timestamp: Date.now(),
-      payload: {}
-    });
-  });
-
+  // -------------------------------
+  // Mouse Click
+  // -------------------------------
   window.addEventListener("click", (e) => {
     emit({
       type: "MOUSE_CLICK",
@@ -64,7 +64,9 @@ export function initEventCollector(emit) {
     });
   });
 
-  // ---------- Scroll ----------
+  // -------------------------------
+  // Scroll
+  // -------------------------------
   window.addEventListener("scroll", () => {
     emit({
       type: "SCROLL",
@@ -72,6 +74,28 @@ export function initEventCollector(emit) {
       payload: {
         scrollY: window.scrollY
       }
+    });
+  });
+
+  // -------------------------------
+  // Mouse Move (Downsampled)
+  // -------------------------------
+  let lastMouseMoveTime = 0;
+  const MOUSEMOVE_INTERVAL = 200; // ms
+
+  window.addEventListener("mousemove", () => {
+    const now = Date.now();
+
+    if (now - lastMouseMoveTime < MOUSEMOVE_INTERVAL) {
+      return; // suppress noisy movement
+    }
+
+    lastMouseMoveTime = now;
+
+    emit({
+      type: "MOUSE_MOVE",
+      timestamp: now,
+      payload: {}
     });
   });
 }
