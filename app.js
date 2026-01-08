@@ -5,6 +5,8 @@ import { inferState } from "./core/stateEngine.js";
 
 import { updateStateBadge } from "./ui/stateBadge.js";
 import { updateMetrics } from "./ui/gauges.js";
+import { saveSessionSummary } from "./core/sessionStore.js";
+import { renderSessionSummary } from "./ui/summary.js";
 
 const stateDurations = {
   FOCUSED: 0,
@@ -106,3 +108,25 @@ setInterval(() => {
     });
   }
 }, 1000);
+
+
+window.addEventListener("beforeunload", () => {
+  const now = Date.now();
+
+  // Finalize last state duration
+  stateDurations[lastState] += now - lastStateChange;
+
+  const summary = {
+    startedAt: sessionStart,
+    endedAt: now,
+    durationMs: now - sessionStart,
+    focusRatio: (now - sessionStart) > 0
+      ? focusedTime / (now - sessionStart)
+      : 0,
+    timeInState: stateDurations
+  };
+
+  saveSessionSummary(summary);
+});
+
+renderSessionSummary();
