@@ -5,6 +5,7 @@ import { inferState } from "./core/stateEngine.js";
 
 import { updateStateBadge } from "./ui/stateBadge.js";
 import { updateMetrics } from "./ui/gauges.js";
+import { addChartPoint, clearChart } from "./ui/stateChart.js";
 import { saveSessionSummary, clearSession } from "./core/sessionStore.js";
 import { renderSessionSummary } from "./ui/summary.js";
 import { addTimelineEvent } from "./ui/timeline.js";
@@ -74,6 +75,7 @@ startBufferProcessor((eventBatch) => {
   const focusRatio = totalTime > 0 ? stateDurations.FOCUSED / totalTime : 0;
 
   updateStateBadge(state);
+  addChartPoint(state);
   updateMetrics({
     ...metrics,
     focusRatio
@@ -114,6 +116,7 @@ setInterval(() => {
     idleTime: timeSinceLastInteraction
   });
   updateStateBadge(lastState);
+  addChartPoint(lastState);
 }, 1000);
 
 window.addEventListener("beforeunload", () => {
@@ -154,6 +157,7 @@ if (resetBtn) {
       
       clearSession();
       clearSummaryUI();
+      clearChart();
       addTimelineEvent("SYSTEM", "Session Reset");
       updateStateBadge("IDLE");
     }
