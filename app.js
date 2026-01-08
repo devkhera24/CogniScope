@@ -20,7 +20,6 @@ const stateDurations = {
    ========================= */
 
 let sessionStart = Date.now();
-let focusedTime = 0;
 
 let lastState = "IDLE";
 let lastStateChange = Date.now();
@@ -42,19 +41,22 @@ initEventCollector((event) => {
    Main Processing Pipeline
    ========================= */
 
-function transitionState(newState) {
+/**
+ * Updates durations for the current state up to the current moment
+ */
+function updateDurations() {
   const now = Date.now();
-
-  // accumulate time for previous state
-  stateDurations[lastState] += now - lastStateChange;
-
-  // accumulate focused time if applicable
-  if (lastState === "FOCUSED") {
-    focusedTime += now - lastStateChange;
+  const delta = now - lastStateChange;
+  if (delta > 0) {
+    stateDurations[lastState] += delta;
+    lastStateChange = now;
   }
+}
 
+function transitionState(newState) {
+  if (newState === lastState) return;
+  updateDurations();
   lastState = newState;
-  lastStateChange = now;
 }
 
 startBufferProcessor((eventBatch) => {
@@ -62,17 +64,14 @@ startBufferProcessor((eventBatch) => {
   if (!metrics) return;
 
   const state = inferState(metrics);
+  
+  // Sync durations and transition
+  transitionState(state);
+  updateDurations();
+
   const now = Date.now();
-
-  // Accumulate focused time
-  stateDurations[lastState] += now - lastStateChange;
-
-  if (state !== lastState) {
-    transitionState(state);
-  }
-
   const totalTime = now - sessionStart;
-  const focusRatio = totalTime > 0 ? focusedTime / totalTime : 0;
+  const focusRatio = totalTime > 0 ? stateDurations.FOCUSED / totalTime : 0;
 
   updateStateBadge(state);
   updateMetrics({
@@ -89,45 +88,44 @@ const IDLE_THRESHOLD = 3000; // ms
 
 setInterval(() => {
   const now = Date.now();
+  const timeSinceLastInteraction = now - lastInteractionTime;
 
   // If no interaction for threshold duration
-  if (now - lastInteractionTime >= IDLE_THRESHOLD) {
+  if (timeSinceLastInteraction >= IDLE_THRESHOLD) {
     const idleMetrics = {
       interactionCount: 0,
       interactionDensity: 0,
       activeTime: 0,
-      idleTime: now - lastInteractionTime
+      idleTime: timeSinceLastInteraction
     };
 
     const state = inferState(idleMetrics);
-
-    if (state !== lastState) {
-      transitionState(state);
-    }
-
-    const totalTime = now - sessionStart;
-    const focusRatio = totalTime > 0 ? focusedTime / totalTime : 0;
-
-    updateStateBadge(state);
-    updateMetrics({
-      ...idleMetrics,
-      focusRatio
-    });
+    transitionState(state);
   }
+
+  // Always keep durations and focus ratio fresh
+  updateDurations();
+  
+  const totalTime = now - sessionStart;
+  const focusRatio = totalTime > 0 ? stateDurations.FOCUSED / totalTime : 0;
+
+  updateMetrics({ 
+    focusRatio,
+    idleTime: timeSinceLastInteraction
+  });
+  updateStateBadge(lastState);
 }, 1000);
 
 window.addEventListener("beforeunload", () => {
   const now = Date.now();
-
-  // Finalize last state duration
-  stateDurations[lastState] += now - lastStateChange;
+  updateDurations();
 
   const summary = {
     startedAt: sessionStart,
     endedAt: now,
     durationMs: now - sessionStart,
     focusRatio: (now - sessionStart) > 0
-      ? focusedTime / (now - sessionStart)
+      ? stateDurations.FOCUSED / (now - sessionStart)
       : 0,
     timeInState: stateDurations
   };
@@ -146,7 +144,7 @@ if (resetBtn) {
   resetBtn.addEventListener("click", () => {
     if (confirm("Reset current session data?")) {
       sessionStart = Date.now();
-      focusedTime = 0;
+      lastInteractionTime = Date.now();
       Object.keys(stateDurations).forEach(k => stateDurations[k] = 0);
       lastState = "IDLE";
       lastStateChange = Date.now();

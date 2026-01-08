@@ -12,11 +12,11 @@ export function updateMetrics(metrics) {
     focusEl.textContent = metrics.focusRatio.toFixed(3);
   }
 
-  if (densityEl) {
+  if (densityEl && typeof metrics.interactionDensity === "number") {
     densityEl.textContent = metrics.interactionDensity.toFixed(2);
   }
 
-  if (idleEl) {
+  if (idleEl && typeof metrics.idleTime === "number") {
     const idleS = (metrics.idleTime / 1000).toFixed(1);
     idleEl.textContent = `${idleS}s`;
   }
