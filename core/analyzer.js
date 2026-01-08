@@ -49,8 +49,11 @@ export function analyzeEventBatch(events) {
 
   const interactionCount = sortedEvents.length;
   const activeTime = Math.max(batchDurationMs - idleTime, 0);
-  const interactionDensity =
-    interactionCount / (batchDurationMs / 1000);
+  const MIN_WINDOW_MS = 1000; // 1 second minimum window
+    const effectiveDurationMs = Math.max(batchDurationMs, MIN_WINDOW_MS);
+
+    const interactionDensity =
+    interactionCount / (effectiveDurationMs / 1000);
 
   lastEventTimestamp = batchEnd;
 

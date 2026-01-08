@@ -15,13 +15,12 @@ export function inferState(metrics) {
 
   // ----- Rule: IDLE -----
   if (
-    interactionDensity < 0.2 &&
-    idleTime > activeTime
-  ) {
-    currentState = "IDLE";
-    return currentState;
-  }
-
+  idleTime >= 3000 &&       // idle for 3s+
+  activeTime < 500          // almost no activity
+) {
+  currentState = "IDLE";
+  return currentState;
+}
   // ----- Rule: FOCUSED -----
   if (
     interactionDensity >= 1.5 &&
