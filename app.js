@@ -6,22 +6,38 @@ import { inferState } from "./core/stateEngine.js";
 import { updateStateBadge } from "./ui/stateBadge.js";
 import { updateMetrics } from "./ui/gauges.js";
 
+/* =========================
+   Session Tracking
+   ========================= */
+
 let sessionStart = Date.now();
 let focusedTime = 0;
+
 let lastState = "IDLE";
 let lastStateChange = Date.now();
 
+let lastInteractionTime = Date.now();
+
+/* =========================
+   Event Collection
+   ========================= */
 
 console.log("CogniScope initialized");
 
 initEventCollector((event) => {
+  lastInteractionTime = Date.now();
   pushEvent(event);
 });
 
+/* =========================
+   Main Processing Pipeline
+   ========================= */
+
 startBufferProcessor((eventBatch) => {
   const metrics = analyzeEventBatch(eventBatch);
-  const state = inferState(metrics);
+  if (!metrics) return;
 
+  const state = inferState(metrics);
   const now = Date.now();
 
   // Accumulate focused time
@@ -42,3 +58,41 @@ startBufferProcessor((eventBatch) => {
   });
 });
 
+/* =========================
+   Idle Watchdog (Critical)
+   ========================= */
+
+const IDLE_THRESHOLD = 3000; // ms
+
+setInterval(() => {
+  const now = Date.now();
+
+  // If no interaction for threshold duration
+  if (now - lastInteractionTime >= IDLE_THRESHOLD) {
+    const idleMetrics = {
+      interactionCount: 0,
+      interactionDensity: 0,
+      activeTime: 0,
+      idleTime: now - lastInteractionTime
+    };
+
+    const state = inferState(idleMetrics);
+
+    // Accumulate focused time correctly
+    if (lastState === "FOCUSED") {
+      focusedTime += now - lastStateChange;
+    }
+
+    lastState = state;
+    lastStateChange = now;
+
+    const totalTime = now - sessionStart;
+    const focusRatio = totalTime > 0 ? focusedTime / totalTime : 0;
+
+    updateStateBadge(state);
+    updateMetrics({
+      ...idleMetrics,
+      focusRatio
+    });
+  }
+}, 1000);
