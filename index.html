@@ -30,8 +30,10 @@
 
     <div class="header-right">
       <span class="session-status">
+        <span class="status-indicator"></span>
         Session: <strong>Active</strong>
       </span>
+      <button id="reset-session" class="btn-reset">Reset</button>
     </div>
   </header>
 
@@ -40,9 +42,12 @@
 
     <!-- Cognitive State -->
     <section class="panel state-panel">
-      <h2>Current Cognitive State</h2>
+      <div class="panel-header">
+        <span class="icon">🧠</span>
+        <h2>Cognitive State</h2>
+      </div>
       <div class="state-display">
-        <span class="state-label">—</span>
+        <span class="state-label" data-state="IDLE">IDLE</span>
         <p class="state-hint">
           Derived from live interaction signals
         </p>
@@ -51,48 +56,107 @@
 
    <!-- Live Metrics -->
 <section class="panel metrics-panel">
-  <h2>Live Behavioral Metrics</h2>
+  <div class="panel-header">
+    <span class="icon">📊</span>
+    <h2>Behavioral Metrics</h2>
+  </div>
 
   <div class="metrics-grid">
     <div class="metric">
       <span class="metric-label">Focus Ratio</span>
-      <span class="metric-value" data-metric="focus">—</span>
+      <span class="metric-value" data-metric="focus">0.00</span>
     </div>
 
     <div class="metric">
       <span class="metric-label">Interaction Density</span>
-      <span class="metric-value" data-metric="density">—</span>
+      <span class="metric-value" data-metric="density">0.00</span>
     </div>
 
     <div class="metric">
-      <span class="metric-label">Idle Time</span>
-      <span class="metric-value" data-metric="idle">—</span>
+      <span class="metric-label">Idle Window</span>
+      <span class="metric-value" data-metric="idle">0s</span>
     </div>
 
     <div class="metric">
       <span class="metric-label">Scroll Intensity</span>
-      <span class="metric-value" data-metric="scroll">—</span>
+      <span class="metric-value" data-metric="scroll">0.00</span>
     </div>
   </div>
 </section>
 
     <!-- Timeline -->
     <section class="panel timeline-panel">
-      <h2>Interaction Timeline</h2>
-      <div class="timeline-placeholder">
-        <p>Timeline visualization will appear here</p>
+      <div class="panel-header">
+        <span class="icon">⏱️</span>
+        <h2>Interaction Timeline</h2>
+      </div>
+      <div class="timeline-container" id="timeline-list">
+        <!-- Events will be injected here -->
       </div>
     </section>
 
     <!-- Session Summary -->
-    <section class="panel summary-panel">
-      <h2>Session Summary</h2>
-      <div class="summary-placeholder">
-        <p>Session insights will be generated at the end</p>
-      </div>
-    </section>
+<section class="panel summary-panel">
+  <div class="panel-header">
+    <span class="icon">📋</span>
+    <h2>Previous Session</h2>
+  </div>
 
-  </main>
+  <div class="session-summary" id="session-summary">
+    <div class="summary-row">
+      <span class="summary-label">Total Duration</span>
+      <span class="summary-value" id="summary-duration">0 min</span>
+    </div>
+
+    <div class="summary-row">
+      <span class="summary-label">Average Focus</span>
+      <span class="summary-value" id="summary-focus">0.00</span>
+    </div>
+
+    <div class="summary-divider"></div>
+
+    <div class="summary-row">
+      <span class="summary-label focused">Time Focused</span>
+      <span class="summary-value" id="summary-focused">0s</span>
+    </div>
+
+    <div class="summary-row">
+      <span class="summary-label distracted">Time Distracted</span>
+      <span class="summary-value" id="summary-distracted">0s</span>
+    </div>
+
+    <div class="summary-row">
+      <span class="summary-label idle">Time Idle</span>
+      <span class="summary-value" id="summary-idle">0s</span>
+    </div>
+    
+    <p class="summary-note">* Session persistent across reloads</p>
+  </div>
+</section>
+    </div>
+
+    <div class="summary-divider"></div>
+
+    <div class="summary-row">
+      <span class="summary-label focused">Focused</span>
+      <span class="summary-value" id="summary-focused">—</span>
+    </div>
+
+    <div class="summary-row">
+      <span class="summary-label distracted">Distracted</span>
+      <span class="summary-value" id="summary-distracted">—</span>
+    </div>
+
+    <div class="summary-row">
+      <span class="summary-label idle">Idle</span>
+      <span class="summary-value" id="summary-idle">—</span>
+    </div>
+
+    <p class="summary-note">
+      Summary shown after page reload
+    </p>
+  </div>
+</section>
 
   <!-- ================= FOOTER ================= -->
   <footer class="app-footer">

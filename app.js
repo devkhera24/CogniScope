@@ -5,17 +5,15 @@ import { inferState } from "./core/stateEngine.js";
 
 import { updateStateBadge } from "./ui/stateBadge.js";
 import { updateMetrics } from "./ui/gauges.js";
-import { saveSessionSummary } from "./core/sessionStore.js";
+import { saveSessionSummary, clearSession } from "./core/sessionStore.js";
 import { renderSessionSummary } from "./ui/summary.js";
-
-
+import { addTimelineEvent } from "./ui/timeline.js";
 
 const stateDurations = {
   FOCUSED: 0,
   DISTRACTED: 0,
   IDLE: 0
 };
-
 
 /* =========================
    Session Tracking
@@ -44,7 +42,7 @@ initEventCollector((event) => {
    Main Processing Pipeline
    ========================= */
 
-   function transitionState(newState) {
+function transitionState(newState) {
   const now = Date.now();
 
   // accumulate time for previous state
@@ -59,7 +57,6 @@ initEventCollector((event) => {
   lastStateChange = now;
 }
 
-
 startBufferProcessor((eventBatch) => {
   const metrics = analyzeEventBatch(eventBatch);
   if (!metrics) return;
@@ -68,13 +65,11 @@ startBufferProcessor((eventBatch) => {
   const now = Date.now();
 
   // Accumulate focused time
-
   stateDurations[lastState] += now - lastStateChange;
 
-if (state !== lastState) {
-  transitionState(state);
-}
-
+  if (state !== lastState) {
+    transitionState(state);
+  }
 
   const totalTime = now - sessionStart;
   const focusRatio = totalTime > 0 ? focusedTime / totalTime : 0;
@@ -106,11 +101,9 @@ setInterval(() => {
 
     const state = inferState(idleMetrics);
 
-    // Accumulate focused time correctly
-    
     if (state !== lastState) {
-    transitionState(state);
-   }
+      transitionState(state);
+    }
 
     const totalTime = now - sessionStart;
     const focusRatio = totalTime > 0 ? focusedTime / totalTime : 0;
@@ -122,7 +115,6 @@ setInterval(() => {
     });
   }
 }, 1000);
-
 
 window.addEventListener("beforeunload", () => {
   const now = Date.now();
@@ -143,4 +135,29 @@ window.addEventListener("beforeunload", () => {
   saveSessionSummary(summary);
 });
 
+/* =========================
+   UI Setup & Reset
+   ========================= */
+
 renderSessionSummary();
+
+const resetBtn = document.getElementById("reset-session");
+if (resetBtn) {
+  resetBtn.addEventListener("click", () => {
+    if (confirm("Reset current session data?")) {
+      sessionStart = Date.now();
+      focusedTime = 0;
+      Object.keys(stateDurations).forEach(k => stateDurations[k] = 0);
+      lastState = "IDLE";
+      lastStateChange = Date.now();
+      
+      const tl = document.getElementById("timeline-list");
+      if (tl) tl.innerHTML = "";
+      
+      clearSession();
+      clearSummaryUI();
+      addTimelineEvent("SYSTEM", "Session Reset");
+      updateStateBadge("IDLE");
+    }
+  });
+}

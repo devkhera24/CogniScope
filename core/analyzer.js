@@ -50,16 +50,23 @@ export function analyzeEventBatch(events) {
   const interactionCount = sortedEvents.length;
   const activeTime = Math.max(batchDurationMs - idleTime, 0);
   const MIN_WINDOW_MS = 1000; // 1 second minimum window
-    const effectiveDurationMs = Math.max(batchDurationMs, MIN_WINDOW_MS);
+  const effectiveDurationMs = Math.max(batchDurationMs, MIN_WINDOW_MS);
 
-    const interactionDensity =
+  const interactionDensity =
     interactionCount / (effectiveDurationMs / 1000);
+
+  // Calculate Scroll Intensity
+  const scrollEvents = sortedEvents.filter(e => e.type === "SCROLL");
+  const scrollIntensity = scrollEvents.length > 0
+    ? scrollEvents.length / (effectiveDurationMs / 1000)
+    : 0;
 
   lastEventTimestamp = batchEnd;
 
   return {
     interactionCount,
     interactionDensity: Number(interactionDensity.toFixed(2)),
+    scrollIntensity: Number(scrollIntensity.toFixed(2)),
     activeTime,
     idleTime
   };

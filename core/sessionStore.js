@@ -21,3 +21,7 @@ export function loadLastSession() {
     return null;
   }
 }
+
+export function clearSession() {
+  localStorage.removeItem(STORAGE_KEY);
+}
